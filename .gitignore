@@ -1,2 +1,3 @@
-*/deploy/*
-*/linux/*
+deploy/
+linux/
+vendor/
