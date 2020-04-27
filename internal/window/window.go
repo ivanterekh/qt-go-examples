@@ -10,7 +10,7 @@ import (
 type Window struct {
 	*widgets.QMainWindow
 	scene     *widgets.QGraphicsScene
-	view      *widgets.QGraphicsView
+	View      *widgets.QGraphicsView
 	item      *widgets.QGraphicsPixmapItem
 	Statusbar *widgets.QStatusBar
 }
@@ -26,25 +26,32 @@ func (w Window) SetImg(img *gui.QImage) {
 func New(dx, dy int) Window {
 	var w Window
 	w.QMainWindow = widgets.NewQMainWindow(nil, 0)
-	w.QMainWindow.SetMinimumSize2(360, 520) // TODO: delete?
+	w.QMainWindow.SetMinimumSize2(480, 720) // TODO: delete?
 
 	w.Statusbar = widgets.NewQStatusBar(w.QMainWindow)
 	w.QMainWindow.SetStatusBar(w.Statusbar)
 
 	w.scene = widgets.NewQGraphicsScene(nil)
-	w.view = widgets.NewQGraphicsView(nil)
+	w.View = widgets.NewQGraphicsView(nil)
 
-	pixmap := gui.NewQPixmap2(core.NewQSize2(dx, dy))
-	pixmap.Fill(color.Black)
+	pixmap := gui.NewQPixmap2(w.View.Size())
+	pixmap.Fill(color.Red)
 
 	w.item = widgets.NewQGraphicsPixmapItem2(pixmap, nil)
 
 	w.scene.AddItem(w.item)
-	w.view.SetScene(w.scene)
-	w.view.Show()
 
-	w.QMainWindow.SetCentralWidget(w.view)
+	w.View.SetScene(w.scene)
+	w.View.Show()
+
+	w.View.ConnectResizeEvent(func(e *gui.QResizeEvent) {
+		img := w.item.Pixmap().ToImage()
+		w.SetImg(img.Scaled(e.Size(), core.Qt__IgnoreAspectRatio, core.Qt__FastTransformation))
+	})
+
+	w.QMainWindow.SetCentralWidget(w.View)
 	w.QMainWindow.Show()
+
 
 	return w
 }

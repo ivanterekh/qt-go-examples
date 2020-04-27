@@ -7,7 +7,6 @@ import (
 	"github.com/ivanterekh/qt-go-examples/internal/tree"
 	"github.com/ivanterekh/qt-go-examples/internal/window"
 	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
 	"math/rand"
 	"strconv"
@@ -23,8 +22,6 @@ type app struct {
 func newApp(dx, dy int) app {
 	a := app{
 		w:        window.New(dx, dy),
-		dx:       dx,
-		dy:       dy,
 		pointNum: 1000,
 	}
 
@@ -48,7 +45,7 @@ func (a app) setupWidgets() {
 			widgets.QMessageBox_Information(
 				nil,
 				"Error",
-				fmt.Sprintf("%s is not a number", input.Text()),
+				fmt.Sprintf("\"%s\" is not a number", input.Text()),
 				widgets.QMessageBox__Ok,
 				widgets.QMessageBox__Ok)
 			return
@@ -66,10 +63,10 @@ func (a app) setupWidgets() {
 }
 
 func (a app) genPoints() {
-	size := a.w.Size()
+	size := a.w.View.Size()
 	w, h := size.Width(), size.Height()
 
-	img := gui.NewQImage2(size, gui.QImage__Format_ARGB32)
+	img := a.w.Img()
 	img.Fill2(color.Black)
 
 	points := make([]geometry.Point, a.pointNum)
