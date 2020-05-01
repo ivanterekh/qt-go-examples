@@ -63,10 +63,10 @@ func (a app) setupWidgets() {
 }
 
 func (a app) genPoints() {
-	size := a.w.View.Size()
+	img := a.w.Img()
+	size := img.Size()
 	w, h := size.Width(), size.Height()
 
-	img := a.w.Img()
 	img.Fill2(color.Black)
 
 	points := make([]geometry.Point, a.pointNum)

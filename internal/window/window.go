@@ -35,7 +35,7 @@ func New(dx, dy int) Window {
 	w.View = widgets.NewQGraphicsView(nil)
 
 	pixmap := gui.NewQPixmap2(w.View.Size())
-	pixmap.Fill(color.Red)
+	pixmap.Fill(color.Black)
 
 	w.item = widgets.NewQGraphicsPixmapItem2(pixmap, nil)
 

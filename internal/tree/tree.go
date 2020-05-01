@@ -28,7 +28,7 @@ type Tree struct {
 
 func New(points []geometry.Point) Tree {
 	tb := treeBuilder{
-		barrier: make(chan struct{}, runtime.NumCPU()-2),
+		barrier: make(chan struct{}, runtime.NumCPU()),
 	}
 
 	return *tb.newTree(points, verticalSplit)
