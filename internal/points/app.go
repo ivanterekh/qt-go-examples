@@ -14,7 +14,6 @@ import (
 
 type app struct {
 	w        window.Window
-	dx, dy   int
 	pointNum int
 	tree     tree.Tree
 }
@@ -39,13 +38,27 @@ func (a app) setupWidgets() {
 	widget.Layout().AddWidget(input)
 
 	button := widgets.NewQPushButton2("Generate", nil)
-	button.ConnectClicked(func(bool) {
-		pointNum, err := strconv.Atoi(input.Text())
+	button.ConnectClicked(a.buttonClickHandler(input.Text()))
+	widget.Layout().AddWidget(button)
+
+	dock := widgets.NewQDockWidget2(nil, 0)
+	dock.SetWidget(widget)
+	dock.SetFeatures(0)
+	a.w.AddDockWidget(core.Qt__TopDockWidgetArea, dock)
+}
+
+func (a app) buttonClickHandler(text string) func(bool) {
+	return func(b bool) {
+		if len(text) == 0 {
+			return
+		}
+
+		pointNum, err := strconv.Atoi(text)
 		if err != nil {
 			widgets.QMessageBox_Information(
 				nil,
 				"Error",
-				fmt.Sprintf("\"%s\" is not a number", input.Text()),
+				fmt.Sprintf("\"%s\" is not a number", text),
 				widgets.QMessageBox__Ok,
 				widgets.QMessageBox__Ok)
 			return
@@ -53,13 +66,7 @@ func (a app) setupWidgets() {
 
 		a.pointNum = pointNum
 		a.genPoints()
-	})
-	widget.Layout().AddWidget(button)
-
-	dock := widgets.NewQDockWidget2(nil, 0)
-	dock.SetWidget(widget)
-	dock.SetFeatures(0)
-	a.w.AddDockWidget(core.Qt__TopDockWidgetArea, dock)
+	}
 }
 
 func (a app) genPoints() {
