@@ -21,6 +21,7 @@ type app struct {
 	rectDrawn bool
 
 	rectStart, rectEnd *core.QPoint
+	dragStart *core.QPoint
 }
 
 func newApp(dx, dy int) app {
@@ -99,28 +100,49 @@ func (a *app) genPoints() {
 
 	a.tree = tree.New(points)
 	a.rectStart, a.rectEnd = nil, nil
+	a.rectDrawn = false
+	a.dragStart = nil
 	a.w.SetImg(a.img)
 }
 
 func (a *app) connectEventHandlers() {
 	a.w.View.ConnectMousePressEvent(a.mousePressHandler)
 	a.w.View.ConnectMouseMoveEvent(a.mouseMoveHandler)
+	a.w.View.ConnectMouseReleaseEvent(a.mouseReleaseHandler)
 	a.w.ConnectPaintEvent(a.paintHandler)
 }
 
 func (a *app) mouseMoveHandler(event *gui.QMouseEvent) {
-	a.rectEnd = event.Pos()
+	if a.dragStart != nil {
+		dx := event.X() - a.dragStart.X()
+		dy := event.Y() - a.dragStart.Y()
+		a.rectStart.SetX(a.rectStart.X() + dx)
+		a.rectStart.SetY(a.rectStart.Y() + dy)
+		a.rectEnd.SetX(a.rectEnd.X() + dx)
+		a.rectEnd.SetY(a.rectEnd.Y() + dy)
+		a.dragStart = event.Pos()
+	}
+	if !a.rectDrawn {
+		a.rectEnd = event.Pos()
+	}
 	a.w.Update()
 }
 
 func (a *app) mousePressHandler(event *gui.QMouseEvent) {
-	if a.rectDrawn {
-		// TODO
-	} else {
+	if !a.rectDrawn || !a.rect().Contains(event.Pos(), false) {
+		a.rectDrawn = false
+		a.dragStart = nil
 		a.rectStart = event.Pos()
 		a.rectEnd = event.Pos()
 	}
+	if a.rectDrawn {
+		a.dragStart = event.Pos()
+	}
 	a.w.Update()
+}
+
+func (a *app) mouseReleaseHandler(event *gui.QMouseEvent) {
+	a.rectDrawn = true
 }
 
 func (a *app) paintHandler(event *gui.QPaintEvent) {
