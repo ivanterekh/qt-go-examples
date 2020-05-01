@@ -14,8 +14,8 @@ func (tb *treeBuilder) newTree(points []geometry.Point, split split) *Tree {
 		return nil
 	}
 
-	//tb.barrier <- struct{}{}
-	//defer func() { <-tb.barrier }()
+	tb.barrier <- struct{}{}
+	defer func() { <-tb.barrier }()
 
 	t := &Tree{
 		split: split,
@@ -42,14 +42,14 @@ func (tb *treeBuilder) newTree(points []geometry.Point, split split) *Tree {
 	mid := len(points) / 2
 	t.point = points[mid]
 
-	//go func() {
-	//	t.left = tb.newTree(points[:mid], split.opposite())
-	//}()
-	//go func() {
-	//	t.right = tb.newTree(points[mid+1:], split.opposite())
-	//}()
-	t.left = tb.newTree(points[:mid], split.opposite())
-	t.right = tb.newTree(points[mid+1:], split.opposite())
+	go func() {
+		t.left = tb.newTree(points[:mid], split.opposite())
+	}()
+	go func() {
+		t.right = tb.newTree(points[mid+1:], split.opposite())
+	}()
+	//t.left = tb.newTree(points[:mid], split.opposite())
+	//t.right = tb.newTree(points[mid+1:], split.opposite())
 
 	return t
 }

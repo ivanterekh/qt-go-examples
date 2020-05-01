@@ -15,17 +15,17 @@ import (
 
 type app struct {
 	w         window.Window
-	tree      *tree.Tree
-	rect      *core.QRect
 	img       *gui.QImage
+	tree      *tree.Tree
 	pointNum  int
 	rectDrawn bool
+
+	rectStart, rectEnd *core.QPoint
 }
 
 func newApp(dx, dy int) app {
 	a := app{
 		w:        window.New(dx, dy),
-		rect:     core.NewQRect(),
 		pointNum: 1000,
 	}
 
@@ -98,7 +98,7 @@ func (a *app) genPoints() {
 	}
 
 	a.tree = tree.New(points)
-	a.rect = core.NewQRect()
+	a.rectStart, a.rectEnd = nil, nil
 	a.w.SetImg(a.img)
 }
 
@@ -109,7 +109,7 @@ func (a *app) connectEventHandlers() {
 }
 
 func (a *app) mouseMoveHandler(event *gui.QMouseEvent) {
-	a.rect.SetBottomRight(event.Pos())
+	a.rectEnd = event.Pos()
 	a.w.Update()
 }
 
@@ -117,9 +117,10 @@ func (a *app) mousePressHandler(event *gui.QMouseEvent) {
 	if a.rectDrawn {
 		// TODO
 	} else {
-		a.rect.SetTopLeft(event.Pos())
-		a.rect.SetBottomRight(event.Pos())
+		a.rectStart = event.Pos()
+		a.rectEnd = event.Pos()
 	}
+	a.w.Update()
 }
 
 func (a *app) paintHandler(event *gui.QPaintEvent) {
@@ -129,11 +130,33 @@ func (a *app) paintHandler(event *gui.QPaintEvent) {
 		return
 	}
 
-	for _, point := range a.tree.PointsInRect(*a.rect) {
+	rect := a.rect()
+	for _, point := range a.tree.PointsInRect(*rect) {
 		img.SetPixelColor2(point.X, point.Y, color.Red)
 	}
+
 	painter := gui.NewQPainter2(img)
 	painter.SetPen(gui.NewQPen3(color.White))
-	painter.DrawRect(core.NewQRectF5(a.rect))
+	painter.DrawRect(core.NewQRectF5(rect))
+
 	a.w.SetImg(img)
+}
+
+func (a *app) rect() *core.QRect {
+	var (
+		x1 = a.rectStart.X()
+		x2 = a.rectEnd.X()
+		y1 = a.rectStart.Y()
+		y2 = a.rectEnd.Y()
+	)
+
+	if x1 > x2 {
+		x1, x2 = x2, x1
+	}
+
+	if y1 > y2 {
+		y1, y2 = y2, y1
+	}
+
+	return core.NewQRect2(core.NewQPoint2(x1, y1), core.NewQPoint2(x2, y2))
 }
