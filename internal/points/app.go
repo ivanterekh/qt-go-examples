@@ -143,6 +143,10 @@ func (a *app) paintHandler(event *gui.QPaintEvent) {
 }
 
 func (a *app) rect() *core.QRect {
+	if a.rectStart == nil || a.rectEnd == nil {
+		return core.NewQRect()
+	}
+
 	var (
 		x1 = a.rectStart.X()
 		x2 = a.rectEnd.X()

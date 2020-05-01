@@ -52,6 +52,5 @@ func New(dx, dy int) Window {
 	w.QMainWindow.SetCentralWidget(w.View)
 	w.QMainWindow.Show()
 
-
 	return w
 }
