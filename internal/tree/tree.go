@@ -26,12 +26,12 @@ type Tree struct {
 	left, right *Tree
 }
 
-func New(points []geometry.Point) Tree {
+func New(points []geometry.Point) *Tree {
 	tb := treeBuilder{
 		barrier: make(chan struct{}, runtime.NumCPU()),
 	}
 
-	return *tb.newTree(points, verticalSplit)
+	return tb.newTree(points, verticalSplit)
 }
 
 func (t Tree) intersect(rect core.QRect) bool {
@@ -60,7 +60,7 @@ func (t Tree) PointsInRect(rect core.QRect) []geometry.Point {
 	} else if t.rectInLeft(rect) {
 		insertNodePoints(t.left, rect, &res)
 	} else {
-		insertNodePoints(t.left, rect, &res)
+		insertNodePoints(t.right, rect, &res)
 	}
 
 	return res
