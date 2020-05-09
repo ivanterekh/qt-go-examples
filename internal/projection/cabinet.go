@@ -8,22 +8,28 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-func TransformationMatrix(xAngle, yAngle, zAngle float64) *mat.Dense {
+func transformationMatrix(xAngle, yAngle, zAngle int) *mat.Dense {
+	var (
+		x = toRad(xAngle)
+		y = toRad(yAngle)
+		z = toRad(zAngle)
+	)
+
 	xMatr := mat.NewDense(3, 3, []float64{
 		1, 0, 0,
-		0, math.Cos(xAngle), -math.Sin(xAngle),
-		0, math.Sin(xAngle), math.Cos(xAngle),
+		0, math.Cos(x), -math.Sin(x),
+		0, math.Sin(x), math.Cos(x),
 	})
 
 	yMatr := mat.NewDense(3, 3, []float64{
-		math.Cos(xAngle), 0, math.Sin(xAngle),
+		math.Cos(y), 0, math.Sin(y),
 		0, 1, 0,
-		-math.Sin(xAngle), 0, math.Cos(xAngle),
+		-math.Sin(y), 0, math.Cos(y),
 	})
 
 	zMatr := mat.NewDense(3, 3, []float64{
-		math.Cos(xAngle), -math.Sin(xAngle), 0,
-		math.Sin(xAngle), math.Cos(xAngle), 0,
+		math.Cos(z), -math.Sin(z), 0,
+		math.Sin(z), math.Cos(z), 0,
 		0, 0, 1,
 	})
 
@@ -41,24 +47,31 @@ func makeTurn(vector *mat.VecDense, matr *mat.Dense) *mat.VecDense {
 
 func makePointProjection(point *gui.QVector3D, angle float64) *core.QPointF {
 	return core.NewQPointF3(
-		float64(point.X()) + float64(point.Z())*math.Cos(angle)/2,
-		float64(point.Y()) + float64(point.Z())*math.Sin(angle)/2,
+		float64(point.X())+float64(point.Z())*math.Cos(angle)/2,
+		float64(point.Y())+float64(point.Z())*math.Sin(angle)/2,
 	)
 }
 
-func GetCubeProjection(center *gui.QVector3D, size float64, angle float64, matr *mat.Dense) []*core.QLineF {
+func GetCubeProjection(center *gui.QVector3D, size float64, xAngle, yAngle, zAngle int) []*core.QLineF {
+
+	matr := transformationMatrix(xAngle, yAngle, zAngle)
+	angle := toRad(45)
+
+	// half size
+	hs := size/2
+
 	var (
-		vert000 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-size, -size, -size}), matr))), angle)
-		vert001 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-size, -size, size}), matr))), angle)
-		vert010 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-size, size, -size}), matr))), angle)
-		vert011 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-size, size, size}), matr))), angle)
-		vert100 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{size, -size, -size}), matr))), angle)
-		vert101 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{size, -size, size}), matr))), angle)
-		vert110 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{size, size, -size}), matr))), angle)
-		vert111 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{size, size, size}), matr))), angle)
+		vert000 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-hs, -hs, -hs}), matr))), angle)
+		vert001 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-hs, -hs, hs}), matr))), angle)
+		vert010 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-hs, hs, -hs}), matr))), angle)
+		vert011 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-hs, hs, hs}), matr))), angle)
+		vert100 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{hs, -hs, -hs}), matr))), angle)
+		vert101 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{hs, -hs, hs}), matr))), angle)
+		vert110 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{hs, hs, -hs}), matr))), angle)
+		vert111 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{hs, hs, hs}), matr))), angle)
 	)
 
-	return []*core.QLineF {
+	return []*core.QLineF{
 		core.NewQLineF2(vert000, vert001),
 		core.NewQLineF2(vert000, vert010),
 		core.NewQLineF2(vert000, vert100),
@@ -88,4 +101,8 @@ func toQVec3d(vec *mat.VecDense) *gui.QVector3D {
 		float32(vec.AtVec(1)),
 		float32(vec.AtVec(2)),
 	)
+}
+
+func toRad(degrees int) float64 {
+	return float64(degrees) * math.Pi / 180
 }
