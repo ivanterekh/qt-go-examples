@@ -2,24 +2,25 @@ package main
 
 import (
 	"fmt"
-	"github.com/ivanterekh/qt-go-examples/internal/color"
-	"github.com/ivanterekh/qt-go-examples/internal/window"
+	"math"
+
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
-	"math"
 
+	"github.com/ivanterekh/qt-go-examples/internal/color"
 	"github.com/ivanterekh/qt-go-examples/internal/projection"
+	"github.com/ivanterekh/qt-go-examples/internal/window"
 )
 
 type app struct {
-	w window.Window
+	w         window.Window
 	axisAngle map[string]int
 }
 
 func newApp(dx, dy int) app {
 	a := app{
-		w: window.New(dx, dy),
+		w:         window.New(dx, dy),
 		axisAngle: make(map[string]int),
 	}
 
@@ -30,7 +31,7 @@ func newApp(dx, dy int) app {
 		cubeSize := math.Min(float64(imgSize.Height()), float64(imgSize.Width())) / 2
 		center := gui.NewQVector3D3(float32(imgSize.Width()/2), float32(imgSize.Height()/2), 0)
 
-		lines := projection.GetCubeProjection(center, cubeSize, a.axisAngle["x"],a.axisAngle["y"],a.axisAngle["z"])
+		lines := projection.GetCubeProjection(center, cubeSize, a.axisAngle["x"], a.axisAngle["y"], a.axisAngle["z"])
 
 		img.Fill2(color.Black)
 
@@ -71,7 +72,7 @@ func (a *app) setupWidgets() {
 func (a *app) addSlider(widget *widgets.QWidget, name string) {
 	labelFmt := "%s=%d°"
 
-	label := widgets.NewQLabel2(fmt.Sprintf(labelFmt, name, 0),nil, 0)
+	label := widgets.NewQLabel2(fmt.Sprintf(labelFmt, name, 0), nil, 0)
 	label.SetFixedWidth(70)
 
 	slider := widgets.NewQSlider(nil)

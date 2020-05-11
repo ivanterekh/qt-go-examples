@@ -1,10 +1,11 @@
 package window
 
 import (
-	"github.com/ivanterekh/qt-go-examples/internal/color"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
+
+	"github.com/ivanterekh/qt-go-examples/internal/color"
 )
 
 type Window struct {

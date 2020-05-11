@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
+
+	"github.com/therecipe/qt/core"
+	"github.com/therecipe/qt/gui"
+	"github.com/therecipe/qt/widgets"
+
 	"github.com/ivanterekh/qt-go-examples/internal/color"
 	"github.com/ivanterekh/qt-go-examples/internal/geometry"
 	"github.com/ivanterekh/qt-go-examples/internal/tree"
 	"github.com/ivanterekh/qt-go-examples/internal/window"
-	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/gui"
-	"github.com/therecipe/qt/widgets"
-	"math/rand"
-	"strconv"
 )
 
 type app struct {
@@ -21,7 +23,7 @@ type app struct {
 	rectDrawn bool
 
 	rectStart, rectEnd *core.QPoint
-	dragStart *core.QPoint
+	dragStart          *core.QPoint
 }
 
 func newApp(dx, dy int) app {

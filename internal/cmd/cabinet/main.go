@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/therecipe/qt/widgets"
 	"os"
+
+	"github.com/therecipe/qt/widgets"
 )
 
 func main() {

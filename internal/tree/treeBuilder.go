@@ -1,8 +1,9 @@
 package tree
 
 import (
-	"github.com/ivanterekh/qt-go-examples/internal/geometry"
 	"sort"
+
+	"github.com/ivanterekh/qt-go-examples/internal/geometry"
 )
 
 type treeBuilder struct {

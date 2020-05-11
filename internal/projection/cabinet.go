@@ -1,10 +1,10 @@
 package projection
 
 import (
-	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/gui"
 	"math"
 
+	"github.com/therecipe/qt/core"
+	"github.com/therecipe/qt/gui"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -58,7 +58,7 @@ func GetCubeProjection(center *gui.QVector3D, size float64, xAngle, yAngle, zAng
 	angle := toRad(45)
 
 	// half size
-	hs := size/2
+	hs := size / 2
 
 	var (
 		vert000 = makePointProjection(sumQVec3D(center, toQVec3d(makeTurn(mat.NewVecDense(3, []float64{-hs, -hs, -hs}), matr))), angle)

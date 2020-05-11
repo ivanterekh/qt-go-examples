@@ -1,9 +1,11 @@
 package tree
 
 import (
-	"github.com/ivanterekh/qt-go-examples/internal/geometry"
-	"github.com/therecipe/qt/core"
 	"runtime"
+
+	"github.com/therecipe/qt/core"
+
+	"github.com/ivanterekh/qt-go-examples/internal/geometry"
 )
 
 type split int
