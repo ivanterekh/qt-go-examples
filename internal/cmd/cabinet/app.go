@@ -50,7 +50,6 @@ func newApp(dx, dy int) app {
 	})
 
 	a.setupWidgets()
-	a.connectEventHandlers()
 	return a
 }
 
@@ -85,14 +84,4 @@ func (a *app) addSlider(widget *widgets.QWidget, name string) {
 
 	widget.Layout().AddWidget(label)
 	widget.Layout().AddWidget(slider)
-}
-
-func (a *app) connectEventHandlers() {
-}
-
-func minInt(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }
