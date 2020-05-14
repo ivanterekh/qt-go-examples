@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ivanterekh/qt-go-examples/internal/bezier"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 
@@ -9,7 +10,10 @@ import (
 	"github.com/ivanterekh/qt-go-examples/internal/window"
 )
 
-const circleR = 7
+const (
+	circleR = 10
+	curveResolution = 50
+)
 
 type app struct {
 	w   window.Window
@@ -78,6 +82,16 @@ func (a *app) paintHandler(event *gui.QPaintEvent) {
 	for _, p := range a.points {
 		painter.DrawEllipse5(core.NewQPoint2(p.X, p.Y), circleR, circleR)
 	}
+
+	painter.SetPen(gui.NewQPen3(color.Red))
+	curvePoints := bezier.Build(a.points, curveResolution)
+	for i := 0; i < len(curvePoints)-1; i++ {
+		drawLine(painter, *curvePoints[i], *curvePoints[i+1])
+	}
+}
+
+func drawLine(painter *gui.QPainter, p1, p2 geometry.Point) {
+	painter.DrawLine3(p1.X, p1.Y, p2.X, p2.Y)
 }
 
 func absInt(a int) int {
