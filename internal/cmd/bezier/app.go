@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	circleR = 10
-	curveResolution = 50
+	circleR         = 10
+	curveResolution = 100
 )
 
 type app struct {
-	w   window.Window
+	w window.Window
 
-	points     []*geometry.Point
+	points     []geometry.Point
 	movedPoint *geometry.Point
 }
 
@@ -48,20 +48,20 @@ func (a *app) mousePressHandler(e *gui.QMouseEvent) {
 	a.movedPoint = a.getPoint(e.Pos())
 
 	if a.movedPoint == nil {
-		a.movedPoint = &geometry.Point{
+		a.points = append(a.points, geometry.Point{
 			X: e.X(),
 			Y: e.Y(),
-		}
-		a.points = append(a.points, a.movedPoint)
+		})
+		a.movedPoint = &a.points[len(a.points)-1]
 	}
 
 	a.w.Update()
 }
 
 func (a *app) getPoint(pos *core.QPoint) *geometry.Point {
-	for _, p := range a.points {
-		if absInt(p.X - pos.X()) < circleR && absInt(p.Y - pos.Y()) < circleR {
-			return p
+	for i, p := range a.points {
+		if absInt(p.X-pos.X()) < circleR && absInt(p.Y-pos.Y()) < circleR {
+			return &a.points[i]
 		}
 	}
 	return nil
@@ -86,7 +86,7 @@ func (a *app) paintHandler(event *gui.QPaintEvent) {
 	painter.SetPen(gui.NewQPen3(color.Red))
 	curvePoints := bezier.Build(a.points, curveResolution)
 	for i := 0; i < len(curvePoints)-1; i++ {
-		drawLine(painter, *curvePoints[i], *curvePoints[i+1])
+		drawLine(painter, curvePoints[i], curvePoints[i+1])
 	}
 }
 

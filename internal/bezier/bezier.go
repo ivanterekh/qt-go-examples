@@ -2,7 +2,7 @@ package bezier
 
 import "github.com/ivanterekh/qt-go-examples/internal/geometry"
 
-func Build(points []*geometry.Point, resolution int) []*geometry.Point {
+func Build(points []geometry.Point, resolution int) []geometry.Point {
 	n := len(points)
 	if n < 3 {
 		return nil
@@ -15,10 +15,10 @@ func Build(points []*geometry.Point, resolution int) []*geometry.Point {
 		ys[i] = float64(p.Y)
 	}
 
-	res := make([]*geometry.Point, resolution+1)
+	res := make([]geometry.Point, resolution+1)
 	for i := 0; i <= resolution; i++ {
 		t := float64(i) / float64(resolution)
-		res[i] = &geometry.Point{
+		res[i] = geometry.Point{
 			X: int(getCoord(xs, t)),
 			Y: int(getCoord(ys, t)),
 		}
