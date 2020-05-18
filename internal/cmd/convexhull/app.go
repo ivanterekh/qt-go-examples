@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 
@@ -17,10 +18,17 @@ import (
 
 const margin = 10
 
+const (
+	jarvis = "Jarvis"
+	quick  = "Quick"
+)
+
 type app struct {
 	w      window.Window
 	img    *gui.QImage
 	points []geometry.Point
+
+	getMethod func() string
 }
 
 func newApp(dx, dy int) app {
@@ -47,6 +55,11 @@ func (a *app) setupWidgets() {
 		a.inputHandler(input.Text())()
 	})
 	widget.Layout().AddWidget(genButton)
+
+	methods := widgets.NewQComboBox(nil)
+	methods.AddItems([]string{jarvis, quick})
+	a.getMethod = methods.CurrentText
+	widget.Layout().AddWidget(methods)
 
 	computeButton := widgets.NewQPushButton2("Compute", nil)
 	computeButton.ConnectClicked(func(bool) {
@@ -103,7 +116,18 @@ func (a *app) genPoints(pointNum int) {
 }
 
 func (a *app) drawConvexHull() {
-	hull := convexhull.SolveJarvis(a.points)
+	var hull []geometry.Point
+	m := a.getMethod()
+	switch m {
+	case quick:
+		hull = convexhull.SolveQuick(a.points)
+	case jarvis:
+		hull = convexhull.SolveJarvis(a.points)
+	default:
+		log.Printf("unknown method %s", m)
+	}
+
+	log.Printf("using %s for convex hull computation", m)
 
 	painter := gui.NewQPainter2(a.img)
 	defer painter.DestroyQPainter()
