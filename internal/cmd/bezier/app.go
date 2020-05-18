@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/ivanterekh/qt-go-examples/internal/bezier"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 
+	"github.com/ivanterekh/qt-go-examples/internal/bezier"
 	"github.com/ivanterekh/qt-go-examples/internal/color"
 	"github.com/ivanterekh/qt-go-examples/internal/geometry"
 	"github.com/ivanterekh/qt-go-examples/internal/window"
