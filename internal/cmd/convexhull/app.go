@@ -21,6 +21,7 @@ const margin = 10
 const (
 	jarvis = "Jarvis"
 	quick  = "Quick"
+	graham = "Graham"
 )
 
 type app struct {
@@ -57,7 +58,7 @@ func (a *app) setupWidgets() {
 	widget.Layout().AddWidget(genButton)
 
 	methods := widgets.NewQComboBox(nil)
-	methods.AddItems([]string{jarvis, quick})
+	methods.AddItems([]string{jarvis, quick, graham})
 	a.getMethod = methods.CurrentText
 	widget.Layout().AddWidget(methods)
 
@@ -123,8 +124,11 @@ func (a *app) drawConvexHull() {
 		hull = convexhull.SolveQuick(a.points)
 	case jarvis:
 		hull = convexhull.SolveJarvis(a.points)
+	case graham:
+		hull = convexhull.SolveGraham(a.points)
 	default:
 		log.Printf("unknown method %s", m)
+		return
 	}
 
 	log.Printf("using %s for convex hull computation", m)
