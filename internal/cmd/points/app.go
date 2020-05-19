@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 
@@ -11,16 +12,27 @@ import (
 
 	"github.com/ivanterekh/qt-go-examples/internal/color"
 	"github.com/ivanterekh/qt-go-examples/internal/geometry"
+	"github.com/ivanterekh/qt-go-examples/internal/net"
 	"github.com/ivanterekh/qt-go-examples/internal/tree"
 	"github.com/ivanterekh/qt-go-examples/internal/window"
 )
 
+const (
+	treeMethod = "2d-Tree"
+	netMethod  = "Net"
+)
+
 type app struct {
-	w         window.Window
-	img       *gui.QImage
-	tree      *tree.Tree
+	w   window.Window
+	img *gui.QImage
+
+	tree     *tree.Tree
+	pointNet *net.Net
+
 	pointNum  int
 	rectDrawn bool
+
+	getMethod func() string
 
 	rectStart, rectEnd *core.QPoint
 	dragStart          *core.QPoint
@@ -42,6 +54,11 @@ func (a *app) setupWidgets() {
 	widget := widgets.NewQWidget(nil, 0)
 	widget.SetLayout(widgets.NewQHBoxLayout())
 	widget.Resize2(widget.Width(), 40)
+
+	methods := widgets.NewQComboBox(nil)
+	methods.AddItems([]string{treeMethod, netMethod})
+	a.getMethod = methods.CurrentText
+	widget.Layout().AddWidget(methods)
 
 	input := widgets.NewQLineEdit(nil)
 	input.SetPlaceholderText("Number of points")
@@ -100,7 +117,12 @@ func (a *app) genPoints() {
 		a.img.SetPixelColor2(point.X, point.Y, color.Green)
 	}
 
-	a.tree = tree.New(points)
+	switch a.getMethod() {
+	case netMethod:
+		a.pointNet = net.New(points, w, h)
+	case treeMethod:
+		a.tree = tree.New(points)
+	}
 	a.rectStart, a.rectEnd = nil, nil
 	a.rectDrawn = false
 	a.dragStart = nil
@@ -150,12 +172,26 @@ func (a *app) mouseReleaseHandler(event *gui.QMouseEvent) {
 func (a *app) paintHandler(event *gui.QPaintEvent) {
 	img := gui.NewQImage10(a.img)
 
-	if a.tree == nil {
+	rect := a.rect()
+	var pointsInRect func(core.QRect) []geometry.Point
+	m := a.getMethod()
+	switch m {
+	case netMethod:
+		if a.pointNet == nil {
+			return
+		}
+		pointsInRect = a.pointNet.PointsInRect
+	case treeMethod:
+		if a.tree == nil {
+			return
+		}
+		pointsInRect = a.tree.PointsInRect
+	default:
+		log.Printf("unknown method %s", m)
 		return
 	}
 
-	rect := a.rect()
-	for _, point := range a.tree.PointsInRect(*rect) {
+	for _, point := range pointsInRect(*rect) {
 		img.SetPixelColor2(point.X, point.Y, color.Red)
 	}
 
