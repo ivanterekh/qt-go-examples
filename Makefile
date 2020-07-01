@@ -1,7 +1,7 @@
 prepare:
 	go install -v -tags=no_env github.com/therecipe/qt/cmd/...
 	git clone https://github.com/therecipe/env_linux_amd64_513.git vendor/github.com/therecipe/env_linux_amd64_513
-	$(go env GOPATH)/bin/qtsetup
+	`go env GOPATH`/bin/qtsetup
 
 build.bezier:
 	./scripts/build.sh bezier
