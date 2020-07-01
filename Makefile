@@ -1,5 +1,6 @@
 prepare:
 	go install -v -tags=no_env github.com/therecipe/qt/cmd/...
+	rm -rf vendor/github.com/therecipe/env_linux_amd64_513
 	git clone https://github.com/therecipe/env_linux_amd64_513.git vendor/github.com/therecipe/env_linux_amd64_513
 	`go env GOPATH`/bin/qtsetup
 
