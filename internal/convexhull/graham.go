@@ -17,7 +17,7 @@ func SolveGraham(points []geometry.Point) []geometry.Point {
 	sort.Slice(points, func(i, j int) bool {
 		tgi, tgj := tg(start, points[i]), tg(start, points[j])
 		if tgi == tgj {
-			return points[i].Y < points[j].Y
+			return points[i].Y > points[j].Y
 		}
 		return tgi < tgj
 	})
