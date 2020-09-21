@@ -1,6 +1,6 @@
 # Qt Go Examples
 
-This repository contains geometrical algorithms and their visualisation made with [Qt binding for Go](https://github.com/therecipe/qt).
+This repository contains geometrical algorithms and their visualisation made with [Qt binding for Go](https://github.com/therecipe/qt). All the code was written as a part of the course "Computational geometry and geometric modeling" during my master studies in Belarusian State University.
 
 ## Requirements
 
